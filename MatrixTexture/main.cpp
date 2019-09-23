@@ -18,7 +18,8 @@ SDL_Window* displayWindow;
 bool gameIsRunning = true;
 
 ShaderProgram program;
-glm::mat4 viewMatrix, modelMatrix, modelMatrix1, modelMatrix2, modelMatrix3, modelMatrix4, modelMatrix5, modelMatrix6, projectionMatrix;
+ShaderProgram program1;
+glm::mat4 viewMatrix, modelMatrix, modelMatrix1, modelMatrix2, modelMatrix3, modelMatrix4, modelMatrix5, modelMatrix6, modelMatrix10, modelMatrix11, projectionMatrix;
 
 float player_x = 0;
 float player_y = 0;
@@ -63,6 +64,7 @@ void Initialize() {
 	glViewport(0, 0, 640, 480);
 
 	program.Load("shaders/vertex_textured.glsl", "shaders/fragment_textured.glsl");
+	program1.Load("shaders/vertex.glsl", "shaders/fragment.glsl");
 
 	//playerTextureID = LoadTexture("me.png"); //object 1 untextured
 	playerTextureID2 = LoadTexture("bird.png"); //object 2
@@ -77,13 +79,20 @@ void Initialize() {
 	modelMatrix3 = glm::mat4(1.0f); //object 3 matrix
 	modelMatrix4 = glm::mat4(1.0f);
 	modelMatrix5 = glm::mat4(1.0f);
+	modelMatrix10 = glm::mat4(1.0f);
+	modelMatrix11 = glm::mat4(1.0f);
 	projectionMatrix = glm::ortho(-5.0f, 5.0f, -3.75f, 3.75f, -1.0f, 1.0f);
 
 	program.SetProjectionMatrix(projectionMatrix);
 	program.SetViewMatrix(viewMatrix);
 	program.SetColor(1.0f, 1.0f, 0.0f, 1.0f);
 
+	program1.SetProjectionMatrix(projectionMatrix);
+	program1.SetViewMatrix(viewMatrix);
+	program1.SetColor(0.0f, 0.0f, 1.0f, 1.0f);
+
 	glUseProgram(program.programID);
+	glUseProgram(program1.programID);
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -162,6 +171,16 @@ void Update() {
 		glm::radians(-rotate_z),
 		glm::vec3(0.0f, 0.0f, 1.0f));
 	modelMatrix3 = glm::translate(modelMatrix6, glm::vec3(player_y, 0.0f, 0.0f));
+
+	modelMatrix10 = glm::mat4(1.0f);
+	modelMatrix10 = glm::translate(modelMatrix10, glm::vec3(2.0f, 1.0f, -1.0f));
+
+	modelMatrix11 = glm::mat4(1.0f);
+	modelMatrix11 = glm::translate(modelMatrix11, glm::vec3(3.0f, 1.0f, -1.0f));
+	modelMatrix11 = glm::rotate(modelMatrix11,
+	glm::radians(-rotate_z),
+		glm::vec3(0.0f, 0.0f, 1.0f));
+	modelMatrix11 = glm::translate(modelMatrix11, glm::vec3(player_y, 0.0f, 0.0f));
 }
 
 void Render() {
@@ -175,6 +194,17 @@ void Render() {
 	glEnableVertexAttribArray(program.positionAttribute);
 	glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
 	glEnableVertexAttribArray(program.texCoordAttribute);
+
+
+	glVertexAttribPointer(program1.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
+	glEnableVertexAttribArray(program1.positionAttribute);
+
+	program1.SetModelMatrix(modelMatrix10);//not texture
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
+	program1.SetModelMatrix(modelMatrix11);//not texture
+	glDrawArrays(GL_TRIANGLES, 0, 3);
+
 
 	glBindTexture(GL_TEXTURE_2D, NULL);
 	program.SetModelMatrix(modelMatrix);//not texture
@@ -206,6 +236,8 @@ void Render() {
 
 	glDisableVertexAttribArray(program.positionAttribute);
 	glDisableVertexAttribArray(program.texCoordAttribute);
+
+	glDisableVertexAttribArray(program1.positionAttribute);
 
 	SDL_GL_SwapWindow(displayWindow);
 }
