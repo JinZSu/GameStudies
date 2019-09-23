@@ -18,7 +18,7 @@ SDL_Window* displayWindow;
 bool gameIsRunning = true;
 
 ShaderProgram program;
-glm::mat4 viewMatrix, modelMatrix, modelMatrix2, modelMatrix3, modelMatrix4, modelMatrix5, modelMatrix6, projectionMatrix;
+glm::mat4 viewMatrix, modelMatrix, modelMatrix1, modelMatrix2, modelMatrix3, modelMatrix4, modelMatrix5, modelMatrix6, projectionMatrix;
 
 float player_x = 0;
 float player_y = 0;
@@ -71,7 +71,8 @@ void Initialize() {
 	playerTextureID3 = LoadTexture("duck.png"); //object 3
 
 	viewMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::mat4(1.0f); //object 1 matrix
+	modelMatrix = glm::mat4(1.0f);
+	modelMatrix1 = glm::mat3(1.0f);//object 1 matrix
 	modelMatrix2 = glm::mat4(1.0f); //object 2 matrix
 	modelMatrix3 = glm::mat4(1.0f); //object 3 matrix
 	modelMatrix4 = glm::mat4(1.0f);
@@ -121,6 +122,9 @@ void Update() {
 	modelMatrix = glm::rotate(modelMatrix,
 		glm::radians(rotate_z),
 		glm::vec3(0.0f, 0.0f, 1.0f));
+
+	modelMatrix1 = glm::mat3(1.0f);
+	modelMatrix1 = glm::translate(modelMatrix1, glm::vec3(-3.0f, -1.0f, -1.0f));
 
 	//Object 2 object movement
 	modelMatrix2 = glm::mat4(1.0f);
@@ -176,6 +180,9 @@ void Render() {
 	program.SetModelMatrix(modelMatrix);//not texture
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
+	glBindTexture(GL_TEXTURE_2D, NULL);
+	program.SetModelMatrix(modelMatrix1);//not texture
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	glBindTexture(GL_TEXTURE_2D, playerTextureID2);// yes texture
 	program.SetModelMatrix(modelMatrix2);
