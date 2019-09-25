@@ -1,0 +1,22 @@
+﻿  main.cpp
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(234,16): warning C4305:  '+=': truncation from 'double' to 'T'
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(234,16): warning C4305:         with
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(234,16): warning C4305:         [
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(234,16): warning C4305:             T=float
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(234,16): warning C4305:         ]
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(240,17): warning C4305:  '+=': truncation from 'double' to 'T'
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(240,17): warning C4305:         with
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(240,17): warning C4305:         [
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(240,17): warning C4305:             T=float
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(240,17): warning C4305:         ]
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(247,16): warning C4305:  '+=': truncation from 'double' to 'T'
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(247,16): warning C4305:         with
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(247,16): warning C4305:         [
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(247,16): warning C4305:             T=float
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(247,16): warning C4305:         ]
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(253,17): warning C4305:  '+=': truncation from 'double' to 'T'
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(253,17): warning C4305:         with
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(253,17): warning C4305:         [
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(253,17): warning C4305:             T=float
+C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(253,17): warning C4305:         ]
+  SDLProject.vcxproj -> C:\Users\js9202\Documents\GitHub\GameStudies\Pong\Debug\SDLProject.exe
