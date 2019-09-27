@@ -30,7 +30,8 @@ GLuint playerTextureID3;
 
 class Player{
 public:
-	Player(float pos,float speed);
+	Player(float pos,float height, float width, float speed);
+	Player(float pos, float movement, float speed);
 	Player(float pos, float speed, GLuint textureID);
 	glm::vec3 getPosition(void);
 	glm::vec3 getMovement(void);
@@ -38,21 +39,29 @@ public:
 	void updatePosition(glm::vec3 update);
 	void updateMovement(glm::vec3 update);
 	void updateSpeed(float speed);
-	void Update(float deltaTime);
+	void Update(float deltaTime, float height, float bottom);
 	void Render(ShaderProgram* program, float vertices[], float texCoords[]);
-
-
 
 private:
 	glm::vec3 position;
 	glm::vec3 movement;
 	float speed;
+	float height;
+	float width;
 	GLuint textureID;
 };
 
-Player::Player(float pos, float speed) {
+Player::Player(float pos, float height, float width, float speed) {
 	this->position = glm::vec3(pos, 0, 0);
 	this->movement = glm::vec3(0, 0, 0);
+	this->speed = speed;
+	this->height = height;
+	this->width = width;
+	this->textureID = NULL;
+}
+Player::Player(float pos, float movement,float speed) {
+	this->position = glm::vec3(pos, 0, 0);
+	this->movement = glm::vec3(movement, movement/6, 0);
 	this->speed = speed;
 	this->textureID = NULL;
 }
@@ -88,15 +97,27 @@ void Player::updateMovement(glm::vec3 update) {
 	this->movement = update;
 }
 
-void Player::Update(float deltaTime) {
-	this->position += this->movement * this->speed * deltaTime;
+void Player::Update(float deltaTime,float height, float bottom) {
+	if (this->position.y <= height and this->position.y >= bottom) {
+		glm::vec3 temp = this->movement * this->speed * deltaTime;
+		if (temp.y + this->position.y > height) {
+			this->position.y = height;
+		}
+		else if (temp.y + this->position.y < bottom) {
+			this->position.y = bottom;
+		}
+		else {
+			this->position += temp;
+		}
+	}
+
 }
 
 void Player::Render(ShaderProgram* program, float vertices[], float texCoords[]) {
 	glm::mat4 modelMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::translate(modelMatrix, this->position);
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(this->width,this-> height, 1.0f));
 	program->SetModelMatrix(modelMatrix);
-
 	if (this->textureID) {
 		glBindTexture(GL_TEXTURE_2D,this->textureID);
 	}
@@ -114,8 +135,9 @@ void Player::Render(ShaderProgram* program, float vertices[], float texCoords[])
 }
 
 
-Player player1(1.777f, 0.7f);
-Player player2(-1.777f, 0.7f);
+Player player1(1.777f, 0.7f, 0.9f, 0.1f);
+Player player2(-1.777f, 0.7f, 0.9f, 0.1f);
+Player ball(0.21f, 0.7f, 0.9f, 0.1f);
 
 void Border(void) {
 	float vertices[] = { -2.0f,-.1f, 2.0f,-0.1f, 2.0f,0.1f, -2.0f,-0.1f,2.0f,0.1f,-2.0f,0.1f };
@@ -259,7 +281,10 @@ void ProcessInput() {
 	if (glm::length(player2.getMovement()) > 1.00f) {
 		player2.updateMovement(glm::normalize(player2.getMovement()));
 	}
+
+	//Ball
 }
+// 55041-OEM-8992671-00437
 
 float lastTicks = 0;
 float rotate_z = 0;
@@ -268,12 +293,37 @@ void Update() {
 	float ticks = (float)SDL_GetTicks() / 1000.0f;
 	float deltaTime = ticks - lastTicks;
 	lastTicks = ticks;
-
-	player1.Update(deltaTime);
-	player2.Update(deltaTime);
-
-
-
+	player1.Update(deltaTime, 0.15f, 0.68f);
+	player2.Update(deltaTime, 0.15f, 0.68f);
+	float height = 0.5f;
+	float bottom = -1.5f;
+	//top bottom
+	if (ball.getPosition().y > 0.5f ||  ball.getPosition().y<-1.5f) {
+		glm::vec3 temp = ball.getMovement();
+		temp.y *= -1.0f;
+		ball.updateMovement(temp);
+	}
+	//right side
+	if (abs(ball.getPosition().y - player1.getPosition().y) - (0.2f) <= 0 && abs(ball.getPosition().x - 1.777f) - (0.2f) <= 0) {
+		glm::vec3 temp = ball.getMovement();
+		temp.x *= -1.0f;
+		ball.updateMovement(temp);
+	}
+	else if (abs(ball.getPosition().y - player2.getPosition().y) - (0.2f) <= 0 && abs(ball.getPosition().x + 1.777f) - (0.2f) <= 0) {
+		glm::vec3 temp = ball.getMovement();
+		temp.x *= -1.0f;
+		ball.updateMovement(temp);
+	}
+	else if (ball.getPosition().x < -1.777f || ball.getPosition().x > 1.777f) { //game over
+		glm::vec3 temp = ball.getMovement();
+		temp.y = 0.9f;
+		temp.x = 0.2f;
+		ball.updateMovement(temp);
+		temp.y = 0.0f;
+		temp.x = 0.0f;
+		ball.updatePosition(temp);
+	}
+	ball.Update(deltaTime, 1.777f, -1.777f);
 }
 
 void Render() {
@@ -296,14 +346,9 @@ void Render() {
 	player1.Render(&program1,boxes,NULL);
 	player2.Render(&program1, boxes, NULL);
 
-	float ball[] = { -0.05f,-0.05f, 0.05f,-0.05f, 0.05f,0.05f, -0.05f,-0.05f, 0.05f,0.05f, -0.05f,0.05f };
-	glVertexAttribPointer(program1.positionAttribute, 2, GL_FLOAT, false, 0, ball);
-	glEnableVertexAttribArray(program1.positionAttribute);
-	
-	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.0f, 0.0f));
-	program1.SetModelMatrix(modelMatrix);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	float ballpos[] = { -0.05f,-0.05f, 0.05f,-0.05f, 0.05f,0.05f, -0.05f,-0.05f, 0.05f,0.05f, -0.05f,0.05f };
+
+	ball.Render(&program1, ballpos, NULL);
 
 	glDisableVertexAttribArray(program1.positionAttribute);
 
