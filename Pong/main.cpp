@@ -17,7 +17,7 @@
 SDL_Window* displayWindow;
 bool gameIsRunning = true;
 
-//ShaderProgram program;
+ShaderProgram program;
 ShaderProgram program1;
 
 glm::mat4 viewMatrix, modelMatrix, projectionMatrix;
@@ -31,10 +31,14 @@ GLuint playerTextureID3;
 class Player{
 public:
 	Player(float pos,float height, float width, float speed);
-	Player(float pos, float movement, float speed);
+	Player(float pos, float height, float width, float movement, float speed);
 	Player(float pos, float speed, GLuint textureID);
 	glm::vec3 getPosition(void);
 	glm::vec3 getMovement(void);
+	float getHeight(void);
+	float getWidth(void);
+	void updateHeight(float x);
+	void updateWidth(float x);
 	float getSpeed(void);
 	void updatePosition(glm::vec3 update);
 	void updateMovement(glm::vec3 update);
@@ -59,10 +63,12 @@ Player::Player(float pos, float height, float width, float speed) {
 	this->width = width;
 	this->textureID = NULL;
 }
-Player::Player(float pos, float movement,float speed) {
+Player::Player(float pos, float height, float width, float movement,float speed) {
 	this->position = glm::vec3(pos, 0, 0);
-	this->movement = glm::vec3(movement, movement/6, 0);
+	this->movement = glm::vec3(movement, movement, 0);
 	this->speed = speed;
+	this->height = height;
+	this->width = width;
 	this->textureID = NULL;
 }
 
@@ -76,15 +82,24 @@ Player::Player(float pos, float speed, GLuint ID) {
 float Player::getSpeed(void) {
 	return this->speed;
 }
-
+float Player::getHeight(void) {
+	return this->height;
+}
+float Player::getWidth(void) {
+	return this->width;
+}
 glm::vec3 Player::getPosition(void) {
 	return this->position;
 }
-
 glm::vec3 Player::getMovement(void) {
 	return this->movement;
 }
-
+void Player::updateHeight(float x) {
+	this->height = x;
+}
+void Player::updateWidth(float x) {
+	this->width = x;
+}
 void Player::updatePosition(glm::vec3 update) {
 	this->position = update;
 }
@@ -135,24 +150,92 @@ void Player::Render(ShaderProgram* program, float vertices[], float texCoords[])
 }
 
 
-Player player1(1.777f, 0.7f, 0.9f, 0.1f);
-Player player2(-1.777f, 0.7f, 0.9f, 0.1f);
-Player ball(0.21f, 0.7f, 0.9f, 0.1f);
+Player player1(-3.0f, 0.42f, 0.3f, 1.0f);
+Player player2(3.0f, 0.42f, 0.3f, 1.0f);
+Player ball(0.0f, 0.1f, 0.15f, 0.9f ,1.7f);
+
+void celebration(int g) {
+	glClear(GL_COLOR_BUFFER_BIT);
+	float leftx = -3.0;
+	float rightx = 3.0f;
+	float topy = -1.0f;
+	float boty = 1.0f;
+	float vertices[] = { leftx, boty, rightx, boty, rightx , topy, leftx, boty, rightx, topy,leftx ,topy };
+	float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
+
+
+	glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
+	glEnableVertexAttribArray(program.positionAttribute);
+	glVertexAttribPointer(program.texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
+	glEnableVertexAttribArray(program.texCoordAttribute);
+	modelMatrix = glm::mat4(1.0f);
+	if (g == 1) {
+		glBindTexture(GL_TEXTURE_2D, playerTextureID);
+		program.SetModelMatrix(modelMatrix);//not texture
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
+	else {
+		glBindTexture(GL_TEXTURE_2D, playerTextureID2);
+		program.SetModelMatrix(modelMatrix);//not texture
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
+
+	glDisableVertexAttribArray(program.positionAttribute);
+	glDisableVertexAttribArray(program.texCoordAttribute);
+
+	SDL_GL_SwapWindow(displayWindow);
+	while (pause and gameIsRunning) {
+		SDL_Event event;
+		while (SDL_PollEvent(&event)) {
+			switch (event.type) {
+
+			case SDL_QUIT:
+				gameIsRunning = false;
+				break;
+
+			case SDL_WINDOWEVENT_CLOSE:
+				gameIsRunning = false;
+				break;
+
+			case SDL_KEYDOWN:
+				switch (event.key.keysym.sym) {
+				case SDLK_SPACE:
+					if (pause) {
+						pause = false;
+						break;
+					}
+					break;
+				}
+				break;
+			}
+		}
+	}
+	pause = true;
+	glClear(GL_COLOR_BUFFER_BIT);
+
+
+};
 
 void Border(void) {
-	float vertices[] = { -2.0f,-.1f, 2.0f,-0.1f, 2.0f,0.1f, -2.0f,-0.1f,2.0f,0.1f,-2.0f,0.1f };
+	float leftx = -3.0;
+	float rightx = 3.0f;
+	float topy = -1.0f;
+	float boty = 1.0f;
+	float vertices[] = { leftx, boty, rightx, boty, rightx , topy, leftx, boty, rightx, topy,leftx ,topy };
 	glVertexAttribPointer(program1.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
 	glEnableVertexAttribArray(program1.positionAttribute);
 
 	//Up
 	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(leftx, boty, 0.0f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(2.9f, 0.1f, 1.0f));
 	program1.SetModelMatrix(modelMatrix);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
 	//Down
 	modelMatrix = glm::mat4(1.0f);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, -1.0f, 0.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(leftx, topy, 0.0f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(2.9f, 0.1f, 1.0f));
 	program1.SetModelMatrix(modelMatrix);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 
@@ -189,28 +272,28 @@ void Initialize() {
 	glewInit();
 #endif
 
-	glViewport(0, 0, 640, 480);
+	glViewport(0, 0, 640, 360);
 
-	//program.Load("shaders/vertex_textured.glsl", "shaders/fragment_textured.glsl");
+	program.Load("shaders/vertex_textured.glsl", "shaders/fragment_textured.glsl");
 	program1.Load("shaders/vertex.glsl", "shaders/fragment.glsl");
 
 	playerTextureID = LoadTexture("me.png"); //object 1 untextured
 	playerTextureID2 = LoadTexture("bird.png"); //object 2
-	playerTextureID3 = LoadTexture("bird.png"); //object 2
+	//playerTextureID3 = LoadTexture("bird.png"); //object 2
 
 	viewMatrix = glm::mat4(1.0f);
 	modelMatrix = glm::mat4(1.0f);
-	projectionMatrix = glm::ortho(-1.777f, 1.777f, -1.0f, 1.0f, -1.0f, 1.0f);
+	projectionMatrix = glm::ortho(-3.0f, 3.0f, -1.0f, 1.0f, -1.0f, 1.0f); //box side
 
-	//program.SetProjectionMatrix(projectionMatrix);
-	//program.SetViewMatrix(viewMatrix);
-	//program.SetColor(1.0f, 1.0f, 0.0f, 1.0f);
+	program.SetProjectionMatrix(projectionMatrix);
+	program.SetViewMatrix(viewMatrix);
+	program.SetColor(1.0f, 1.0f, 0.0f, 1.0f);
 
 	program1.SetProjectionMatrix(projectionMatrix);
 	program1.SetViewMatrix(viewMatrix);
 	program1.SetColor(0.0f, 1.0f, 1.0f, 1.0f);
 
-	//glUseProgram(program.programID);
+	glUseProgram(program.programID);
 	glUseProgram(program1.programID);
 
 	glEnable(GL_BLEND);
@@ -251,26 +334,26 @@ void ProcessInput() {
 	// |   ^
 	if (keys[SDL_SCANCODE_UP]) {
 		glm::vec3 temp = player1.getMovement();
-		temp.y += 0.3;
+		temp.y += 0.03;
 		//temp.x = 1.777;
 		player1.updateMovement(temp);
 	}
 	if (keys[SDL_SCANCODE_DOWN]) {
 		glm::vec3 temp = player1.getMovement();
-		temp.y += -0.3;
+		temp.y += -0.03;
 		//temp.x = 1.777;
 		player1.updateMovement(temp);
 	}
 	// W/S to move left
 	if (keys[SDL_SCANCODE_W]) {
 		glm::vec3 temp = player2.getMovement();
-		temp.y += 0.3;
+		temp.y += 0.03;
 		//temp.x = -1.777;
 		player2.updateMovement(temp);
 	}
 	if (keys[SDL_SCANCODE_S]) {
 		glm::vec3 temp = player2.getMovement();
-		temp.y += -0.3;
+		temp.y += -0.03;
 		//temp.x = -1.777;
 		player2.updateMovement(temp);
 	}
@@ -293,45 +376,100 @@ void Update() {
 	float ticks = (float)SDL_GetTicks() / 1000.0f;
 	float deltaTime = ticks - lastTicks;
 	lastTicks = ticks;
-	player1.Update(deltaTime, 0.15f, 0.68f);
-	player2.Update(deltaTime, 0.15f, 0.68f);
-	float height = 0.5f;
-	float bottom = -1.5f;
+	float top = 1.0f - player1.getHeight()/2.0f - 0.1f;
+	float top2 = 1.0f - player2.getHeight()/2.0f - 0.1f;
+	player1.Update(deltaTime, top, -1 * top);
+	player2.Update(deltaTime, top2, -1 * top2);
+	float bottom = 0.05f;
 	//top bottom
-	if (ball.getPosition().y > 0.5f ||  ball.getPosition().y<-1.5f) {
+	if ((1.0f - abs(ball.getPosition().y) - ball.getHeight() <= 0.05f)) {
 		glm::vec3 temp = ball.getMovement();
 		temp.y *= -1.0f;
 		ball.updateMovement(temp);
 	}
 	//right side
-	if (abs(ball.getPosition().y - player1.getPosition().y) - (0.2f) <= 0 && abs(ball.getPosition().x - 1.777f) - (0.2f) <= 0) {
+	float left = fabs(player1.getPosition().x - ball.getPosition().x) - ((player1.getWidth() + ball.getWidth()) / 2.0f);
+	float uleft = fabs(player1.getPosition().y - ball.getPosition().y) - ((player1.getHeight() + ball.getHeight()) / 2.0f);
+	float right = fabs(player2.getPosition().x - ball.getPosition().x) - ((player2.getWidth() + ball.getWidth()) / 2.0f);
+	float uright = fabs(player2.getPosition().y - ball.getPosition().y) - ((player2.getHeight() + ball.getHeight()) / 2.0f);
+
+
+	if (left <= 0.0f && uleft <= 0.0f) {
 		glm::vec3 temp = ball.getMovement();
 		temp.x *= -1.0f;
 		ball.updateMovement(temp);
 	}
-	else if (abs(ball.getPosition().y - player2.getPosition().y) - (0.2f) <= 0 && abs(ball.getPosition().x + 1.777f) - (0.2f) <= 0) {
+	else if (right <= 0.0f && uright <= 0.0f) {
 		glm::vec3 temp = ball.getMovement();
 		temp.x *= -1.0f;
 		ball.updateMovement(temp);
+
 	}
-	else if (ball.getPosition().x < -1.777f || ball.getPosition().x > 1.777f) { //game over
+	else if (ball.getPosition().x - ball.getWidth() - player1.getWidth() < -3.5f ) { //game over
+		celebration(1);
 		glm::vec3 temp = ball.getMovement();
 		temp.y = 0.9f;
-		temp.x = 0.2f;
+		temp.x = 0.9f;
 		ball.updateMovement(temp);
 		temp.y = 0.0f;
 		temp.x = 0.0f;
 		ball.updatePosition(temp);
+
 	}
-	ball.Update(deltaTime, 1.777f, -1.777f);
+	else if (ball.getPosition().x + ball.getWidth() + player2.getWidth() > 3.5f) { //game over
+		celebration(2);
+		glm::vec3 temp = ball.getMovement();
+		temp.y = 0.9f;
+		temp.x = 0.9f;
+		ball.updateMovement(temp);
+		temp.y = 0.0f;
+		temp.x = 0.0f;
+		ball.updatePosition(temp);
+
+	}
+	/*
+	if ((abs(ball.getPosition().y - player1.getPosition().y) <= player1.getHeight() + ball.getHeight())  && (abs(ball.getPosition().x - player1.getPosition().x) <= ball.getWidth() + player1.getWidth())) {
+		glm::vec3 temp = ball.getMovement();
+		temp.x *= -1.0f;
+		ball.updateMovement(temp);
+	}
+	//left side
+	else if ((abs(ball.getPosition().y  - player2.getPosition().y) <=  player2.getHeight() + ball.getHeight()) && (abs(ball.getPosition().x - player2.getPosition().x) <=  player2.getWidth() + ball.getWidth())) {
+		glm::vec3 temp = ball.getMovement();
+		temp.x *= -1.0f;
+		ball.updateMovement(temp);
+	}
+	//pass
+	else if (ball.getPosition().x - ball.getWidth() - player1.getWidth() < -3.0f || ball.getPosition().x  + ball.getWidth() + player2.getWidth() > 3.0f) { //game over
+		glm::vec3 temp = ball.getMovement();
+		temp.y = 0.9f;
+		temp.x = 0.9f;
+		ball.updateMovement(temp);
+		temp.y = 0.0f;
+		temp.x = 0.0f;
+		ball.updatePosition(temp);
+	*/
+	/*
+	}
+	else if ((abs(ball.getPosition().x - player1.getPosition().x) < ball.getWidth() + player1.getWidth()) || (abs(ball.getPosition().x - player2.getPosition().x) <= player2.getWidth() + ball.getWidth())) {
+		glm::vec3 temp = ball.getMovement();
+		temp.y *= -1.0f;
+		ball.updateMovement(temp);
+	}*/
+	ball.Update(deltaTime, 1.0f - ball.getHeight(), -1.0f + ball.getHeight());
 }
 
 void Render() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	Border();
+	float leftx = -3.0f;
+	float rightx = 3.0f;
+	float topy = -1.0f;
+	float boty = 1.0f;
+
 	
-	float boxes[] = { -0.05f,-0.25f, 0.05f,-0.25f, 0.05f,0.25f, -0.05f,-0.25f, 0.05f,0.25f, -0.05f,0.25f };
-	//float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
+	//float boxes[] = { leftx, boty, rightx, boty, rightx , topy, leftx, boty, rightx, topy,leftx ,topy };
+	float boxes[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
 
 
 	//glVertexAttribPointer(program.positionAttribute, 2, GL_FLOAT, false, 0, vertices);
@@ -346,9 +484,9 @@ void Render() {
 	player1.Render(&program1,boxes,NULL);
 	player2.Render(&program1, boxes, NULL);
 
-	float ballpos[] = { -0.05f,-0.05f, 0.05f,-0.05f, 0.05f,0.05f, -0.05f,-0.05f, 0.05f,0.05f, -0.05f,0.05f };
+	//float ballpos[] = { -0.05f,-0.05f, 0.05f,-0.05f, 0.05f,0.05f, -0.05f,-0.05f, 0.05f,0.05f, -0.05f,0.05f };
 
-	ball.Render(&program1, ballpos, NULL);
+	ball.Render(&program1, boxes, NULL);
 
 	glDisableVertexAttribArray(program1.positionAttribute);
 

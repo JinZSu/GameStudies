@@ -1,22 +1,22 @@
 ﻿  main.cpp
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(254,16): warning C4305:  '+=': truncation from 'double' to 'T'
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(254,16): warning C4305:         with
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(254,16): warning C4305:         [
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(254,16): warning C4305:             T=float
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(254,16): warning C4305:         ]
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(260,17): warning C4305:  '+=': truncation from 'double' to 'T'
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(260,17): warning C4305:         with
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(260,17): warning C4305:         [
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(260,17): warning C4305:             T=float
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(260,17): warning C4305:         ]
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(267,16): warning C4305:  '+=': truncation from 'double' to 'T'
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(267,16): warning C4305:         with
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(267,16): warning C4305:         [
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(267,16): warning C4305:             T=float
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(267,16): warning C4305:         ]
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(273,17): warning C4305:  '+=': truncation from 'double' to 'T'
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(273,17): warning C4305:         with
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(273,17): warning C4305:         [
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(273,17): warning C4305:             T=float
-C:\Users\js9202\Documents\GitHub\GameStudies\Pong\main.cpp(273,17): warning C4305:         ]
-  SDLProject.vcxproj -> C:\Users\js9202\Documents\GitHub\GameStudies\Pong\Debug\SDLProject.exe
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(337,17): warning C4305:  '+=': truncation from 'double' to 'T'
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(337,17): warning C4305:         with
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(337,17): warning C4305:         [
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(337,17): warning C4305:             T=float
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(337,17): warning C4305:         ]
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(343,18): warning C4305:  '+=': truncation from 'double' to 'T'
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(343,18): warning C4305:         with
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(343,18): warning C4305:         [
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(343,18): warning C4305:             T=float
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(343,18): warning C4305:         ]
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(350,17): warning C4305:  '+=': truncation from 'double' to 'T'
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(350,17): warning C4305:         with
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(350,17): warning C4305:         [
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(350,17): warning C4305:             T=float
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(350,17): warning C4305:         ]
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(356,18): warning C4305:  '+=': truncation from 'double' to 'T'
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(356,18): warning C4305:         with
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(356,18): warning C4305:         [
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(356,18): warning C4305:             T=float
+C:\Users\kelvi\Desktop\GameStudies\Pong\main.cpp(356,18): warning C4305:         ]
+  SDLProject.vcxproj -> C:\Users\kelvi\Desktop\GameStudies\Pong\Debug\SDLProject.exe
