@@ -16,6 +16,13 @@
 class Entity {
 public:
     
+	float height;
+	float width;
+	float circle;
+
+	bool thrust;
+	bool landed;
+
     glm::vec3 position;
     glm::vec3 movement;
 	glm::vec3 velocity;
@@ -23,7 +30,11 @@ public:
     GLuint textureID;
     
     Entity();
+	void 
 	bool checkCollision(Entity other);
-    void Update(float deltaTime);
+    void Update(float deltaTime, Entity *objects, int objectcount);
+	void checkCollisionsY(Entity* objects, int objectcount)
+	void checkCollisionsX(Entity* objects, int objectcount)
     void Render(ShaderProgram *program);
+	bool Entity::checkCollision(Entity other);
 };

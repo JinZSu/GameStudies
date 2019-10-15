@@ -1,11 +1,15 @@
 #include "Entity.h"
 
-Entity::Entity()
+Entity::Entity(float width, float height)
 {
     position = glm::vec3(0);
 	this->velocity = glm::vec3(0);
 	this->acceleration = glm::vec3(0);
 	this->gravity = -2.37;
+	this->height = height;
+	this->width = width;
+	this->landed = false;
+	this->thrust = false;
 }
 
 void Entity::Input()
@@ -21,11 +25,70 @@ void Entity::Input()
 		this->velocity += 1;
 	}
 }	
-
-void Entity::Update(float deltaTime)
+void Entity::checkCollisionsY(Entity* objects, int objectcount)
 {
+	for (int i = 0; i < objectCount; i++)
+	{
+		Entity object = objects[i];
+		if (checkCollision(object))
+		{
+			float ydist = fabs(this->position.y - object.position.y);
+			float penetrationY = fabs(ydist - (this->height / 2) - (object.height / 2));
+			if (this->velocity.y > 0)
+			{
+				this->position.y -= penetrationY;
+				this->velocity.y = 0;
+			}
+			else if (this->velocity.y < 0)
+			{
+				this->position.y += penetrationY;
+				this->velocity.y = 0;
+			}
+		}
+	}
+}
 
-    this->velocity += this->acceleration* deltaTime;
+bool Entity::checkCollision(Entity other)
+{
+	float xdisit = fabs(this->position.x - other.position.x) - ((this->width + other.width) / 2.0f);
+	float ydisit = fabs(this->position.y - other.position.y) - ((this->height + other.height) / 2.0f);
+	if (xdist < 0 && ydist < 0)
+	{
+		return true;
+	}
+	return false;
+}
+
+void Entity::checkCollisionsX(Entity* objects, int objectcount)
+{
+	for (int i = 0; i < objectCount; i++)
+	{
+		Entity object = objects[i];
+		if (checkCollision(object))
+		{
+			float xdist = fabs(this->position.x - object.position.x);
+			float penetrationX = fabs(xdist - (this->width / 2) - (object.width / 2));
+			if (this->velocity.x > 0)
+			{
+				this->position.x -= penetrationX;
+				this->velocity.x = 0;
+			}
+			else if (this->velocity.x < 0)
+			{
+				this->position.x += penetrationX;
+				this->velocity.x = 0;
+			}
+		}
+	}
+}
+
+void Entity::Update(float deltaTime, Entity* objects, int objectcount)
+{
+	this->velocity += this->acceleration * deltaTime;
+	this->position.y += this->velocity.y * deltaTime;
+	checkCollisionsY(objects, objectcount);
+	this->position.x += this->velocity.x * deltaTime;
+	checkCollisionsX(objects, objectcount);
 }
 
 
