@@ -1,7 +1,2 @@
 ﻿  main.cpp
-C:\Users\js9202\Documents\GitHub\GameStudies\LunarLander\main.cpp(71,31): error C2039:  'acceleration': is not a member of 'Entity'
-C:\Users\js9202\Documents\GitHub\GameStudies\LunarLander\Entity.h(16): message :  see declaration of 'Entity'
-C:\Users\js9202\Documents\GitHub\GameStudies\LunarLander\main.cpp(117,46): error C2039:  'velocity': is not a member of 'Entity'
-C:\Users\js9202\Documents\GitHub\GameStudies\LunarLander\Entity.h(16): message :  see declaration of 'Entity'
-C:\Users\js9202\Documents\GitHub\GameStudies\LunarLander\main.cpp(143,76): error C2660:  'Entity::Update': function does not take 3 arguments
-C:\Users\js9202\Documents\GitHub\GameStudies\LunarLander\Entity.h(27,10): message :  see declaration of 'Entity::Update'
+  SDLProject.vcxproj -> C:\Users\js9202\Documents\GitHub\GameStudies\LunarLander\Debug\SDLProject.exe
