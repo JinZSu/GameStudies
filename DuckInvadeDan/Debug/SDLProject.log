@@ -1,0 +1,8 @@
+﻿  main.cpp
+  ShaderProgram.cpp
+  Generating Code...
+main.obj : error LNK2019: unresolved external symbol "public: __thiscall Entity::Entity(void)" (??0Entity@@QAE@XZ) referenced in function "public: __thiscall GameState::GameState(void)" (??0GameState@@QAE@XZ)
+main.obj : error LNK2019: unresolved external symbol "public: void __thiscall Entity::Update(float,class Entity *,int)" (?Update@Entity@@QAEXMPAV1@H@Z) referenced in function "void __cdecl Update(void)" (?Update@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol "public: void __thiscall Entity::Render(class ShaderProgram *)" (?Render@Entity@@QAEXPAVShaderProgram@@@Z) referenced in function "void __cdecl Render(void)" (?Render@@YAXXZ)
+main.obj : error LNK2019: unresolved external symbol "public: void __thiscall Entity::Jump(void)" (?Jump@Entity@@QAEXXZ) referenced in function "void __cdecl ProcessInput(void)" (?ProcessInput@@YAXXZ)
+C:\Users\js9202\Desktop\DuckInvadeDan\Debug\SDLProject.exe : fatal error LNK1120: 4 unresolved externals
