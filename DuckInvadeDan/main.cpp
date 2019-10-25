@@ -71,7 +71,6 @@ void Entity::CheckCollisionsY(Entity* objects, int objectCount)
 	for (int i = 0; i < objectCount; i++)
 	{
 		Entity object = objects[i];
-
 		if (CheckCollision(object,0) && object.entityType == PLATFORM)
 		{
 			float ydist = fabs(position.y - object.position.y);
@@ -87,16 +86,19 @@ void Entity::CheckCollisionsY(Entity* objects, int objectCount)
 				collidedBottom = true;
 			}
 		}
-		else if (CheckCollision(object, 0) && object.entityType != PLATFORM && entityType != PLAYER) {
+		else if (CheckCollision(object, 0) && object.entityType == PLAYER) {
 			float ydist = fabs(position.y - object.position.y);
 			float penetrationY = fabs(ydist - (height / 2) - (object.height / 2));
-			if (velocity.y > 0) {
+			if (velocity.y >= 0) {
 				position.y -= penetrationY;
 				velocity.y = 0;
 				collidedTop = true;
 				this->isActive = false;
 				this->killed = true;
 				this->isStatic = true;
+				if (killed) {
+					position = glm::vec3(-9.0f, -9.0f, 1.0f);
+				}
 			}
 			else if (velocity.y < 0) {
 				position.y += penetrationY;
@@ -130,7 +132,7 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
 					collidedLeft = true;
 				}
 			}
-		else if (CheckCollision(object, 0) && object.entityType != PLATFORM){
+		else if (CheckCollision(object, 0) && object.entityType != PLATFORM && !object.killed){
 			float xdist = fabs(position.x - object.position.x);
 			float penetrationX = fabs(xdist - (width / 2) - (object.width / 2));
 			if (velocity.x > 0) {
@@ -417,12 +419,12 @@ void Update() {
     
     while (deltaTime >= FIXED_TIMESTEP) {
         // Update. Notice it's FIXED_TIMESTEP. Not deltaTime
-		state.player.Update(FIXED_TIMESTEP, state.enemy, 3);
 		for (int i = 0; i < 3; i++)
 		{
 			state.enemy[i].Update(FIXED_TIMESTEP, &state.player, 1);
 			state.enemy[i].Update(FIXED_TIMESTEP, state.platforms, PLATFORM_COUNT);
 		}
+		state.player.Update(FIXED_TIMESTEP, state.enemy, 3);
 		state.player.Update(FIXED_TIMESTEP, state.platforms, PLATFORM_COUNT);
         deltaTime -= FIXED_TIMESTEP;
     }
