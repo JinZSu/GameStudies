@@ -12,7 +12,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "ShaderProgram.h"
 
-enum  EntityType { PLAYER, PLATFORM, COIN };
+enum  EntityType { PLAYER, PLATFORM, ENEMY1, ENEMY2, ENEMY3 };
 
 
 class Entity {
@@ -21,6 +21,7 @@ public:
     EntityType entityType;
     bool isStatic;
     bool isActive;
+	bool killed;
     
     glm::vec3 position;
     glm::vec3 velocity;
@@ -35,7 +36,7 @@ public:
     
     Entity();
     
-    bool CheckCollision(Entity other);
+    bool CheckCollision(Entity other,int num);
     
     void CheckCollisionsX(Entity *objects, int objectCount);
     void CheckCollisionsY(Entity *objects, int objectCount);
