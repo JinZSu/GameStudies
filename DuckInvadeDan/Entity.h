@@ -22,6 +22,10 @@ public:
     bool isStatic;
     bool isActive;
 	bool killed;
+	bool kill1;
+	bool kill2;
+	bool kill3;
+	bool win;
     
     glm::vec3 position;
     glm::vec3 velocity;

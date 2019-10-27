@@ -42,6 +42,10 @@ Entity::Entity()
 	entityType = PLATFORM;
 	isStatic = true;
 	isActive = true;
+	win = false;
+	kill1 = false;
+	kill2 = false;
+	kill3 = false;
 	killed = false;
 	position = glm::vec3(0);
 	speed = 0;
@@ -86,7 +90,7 @@ void Entity::CheckCollisionsY(Entity* objects, int objectCount)
 				collidedBottom = true;
 			}
 		}
-		else if (CheckCollision(object, 0) && object.entityType == PLAYER) {
+		else if (CheckCollision(object, 0) && (object.entityType == ENEMY1 || object.entityType == ENEMY2 || object.entityType == ENEMY3) ) {
 			float ydist = fabs(position.y - object.position.y);
 			float penetrationY = fabs(ydist - (height / 2) - (object.height / 2));
 			if (velocity.y >= 0) {
@@ -104,9 +108,9 @@ void Entity::CheckCollisionsY(Entity* objects, int objectCount)
 				position.y += penetrationY;
 				velocity.y = 0;
 				collidedBottom = true;
-				this->isActive = false;
-				this->killed = true;
-				this->isStatic = true;
+				objects[i].isActive = false;
+				objects[i].killed = true;
+				objects[i].isStatic = true;
 			}
 		}
 	}
@@ -132,7 +136,7 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
 					collidedLeft = true;
 				}
 			}
-		else if (CheckCollision(object, 0) && object.entityType != PLATFORM && !object.killed){
+		else if (CheckCollision(object, 0) && object.entityType != PLATFORM && !object.killed && this->entityType == PLAYER){
 			float xdist = fabs(position.x - object.position.x);
 			float penetrationX = fabs(xdist - (width / 2) - (object.width / 2));
 			if (velocity.x > 0) {
@@ -142,9 +146,9 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
 				this->isActive = false;
 				this->killed = true;
 				this->isStatic = true;
-				object.isActive = false;
-				object.killed = true;
-				object.isStatic = true;
+				objects[i].isActive = false;
+				objects[i].killed = true;
+				objects[i].isStatic = true;
 			}
 			else if (velocity.x < 0) {
 				position.x += penetrationX;
@@ -153,9 +157,9 @@ void Entity::CheckCollisionsX(Entity* objects, int objectCount)
 				this->isActive = false;
 				this->killed = true;
 				this->isStatic = true;
-				object.isActive = false;
-				object.killed = true;
-				object.isStatic = true;
+				objects[i].isActive = false;
+				objects[i].killed = true;
+				objects[i].isStatic = true;
 			}
 		}
 		if (CheckCollision(object, 1) && (object.entityType != PLATFORM)) {
@@ -182,9 +186,6 @@ void Entity::Update(float deltaTime, Entity* objects, int objectCount)
 	collidedBottom = false;
 	collidedLeft = false;
 	collidedRight = false;
-	if (killed) {
-		position = glm::vec3(-9.0f,-9.0f,1.0f);
-	}
 
 	if (this->entityType == PLAYER && objects[0].entityType == PLATFORM) {
 		velocity += acceleration * deltaTime;
@@ -196,12 +197,15 @@ void Entity::Update(float deltaTime, Entity* objects, int objectCount)
 		CheckCollisionsX(objects, objectCount);    // Fix if needed
 	}
 	else if (this->entityType == PLAYER && objects[0].entityType != PLATFORM) {
+		if (this->kill1 && this->kill2 && this->kill3) {
+			this->win = true;
+		}
 		velocity += acceleration * deltaTime;
-		position.y += velocity.y * deltaTime;        // Move on Y
-		CheckCollisionsY(objects, objectCount);    // Fix if needed
 
 		position.x += velocity.x * deltaTime;        // Move on X
 		CheckCollisionsX(objects, objectCount);    // Fix if needed
+		position.y += velocity.y * deltaTime;        // Move on Y
+		CheckCollisionsY(objects, objectCount);    // Fix if needed
 	}
 	if (this->entityType == ENEMY1 && objects[0].entityType == PLATFORM) {
 		velocity += acceleration * deltaTime;
@@ -211,6 +215,38 @@ void Entity::Update(float deltaTime, Entity* objects, int objectCount)
 		position.x += velocity.x * deltaTime;        // Move on X
 		CheckCollisionsX(objects, objectCount);    // Fix if needed
 	}
+	else if (this->entityType == ENEMY1 && objects[0].entityType == PLAYER) {
+		if (this->killed) {
+			objects[0].kill1 = true;
+		}
+		else if (CheckCollision(objects[0], 2)) {
+			if (position.x < -0.5) {
+				acceleration += glm::vec3(0.3f, -0.1f, 0.0f);
+				velocity += acceleration * deltaTime;
+				position.y += velocity.y * deltaTime;        // Move on Y
+				CheckCollisionsY(objects, objectCount);    // Fix if needed
+
+				position.x += velocity.x * deltaTime;        // Move on X
+				CheckCollisionsX(objects, objectCount);    // Fix if needed
+			}
+			else if (position.x <= 0.5)
+			{
+				acceleration += glm::vec3(-0.3f, 0.1f, 0.0f);
+				velocity += acceleration * deltaTime;
+				position.y += velocity.y * deltaTime;        // Move on Y
+				CheckCollisionsY(objects, objectCount);    // Fix if needed
+
+				position.x += velocity.x * deltaTime;        // Move on X
+				CheckCollisionsX(objects, objectCount);    // Fix if needed
+			}
+			if (velocity.y >= 0.2) {
+				acceleration = glm::vec3(0.0f, -1.0f, 0.0f);
+			}
+			else {
+				acceleration = glm::vec3(0.0f, 0.0f, 0.0f);
+			}
+		}
+	}
 	if (this->entityType == ENEMY2 && objects[0].entityType == PLATFORM) {
 		velocity += acceleration * deltaTime;
 		position.y += velocity.y * deltaTime;        // Move on Y
@@ -218,6 +254,32 @@ void Entity::Update(float deltaTime, Entity* objects, int objectCount)
 
 		position.x += velocity.x * deltaTime;        // Move on X
 		CheckCollisionsX(objects, objectCount);    // Fix if needed
+	}
+	else if (this->entityType == ENEMY2 && objects[0].entityType == PLAYER) {
+		if (this->killed) {
+			objects[0].kill2 = true;
+		}
+		else if (CheckCollision(objects[0], 2)) {
+			if (position.x < -0.25) {
+				acceleration += glm::vec3(0.3f, 0.0f, 0.0f);
+				velocity += acceleration * deltaTime;
+				position.y += velocity.y * deltaTime;        // Move on Y
+				CheckCollisionsY(objects, objectCount);    // Fix if needed
+
+				position.x += velocity.x * deltaTime;        // Move on X
+				CheckCollisionsX(objects, objectCount);    // Fix if needed
+			}
+			else if (position.x <= 1.5)
+			{
+				acceleration += glm::vec3(-0.3f, 0.0f, 0.0f);
+				velocity += acceleration * deltaTime;
+				position.y += velocity.y * deltaTime;        // Move on Y
+				CheckCollisionsY(objects, objectCount);    // Fix if needed
+
+				position.x += velocity.x * deltaTime;        // Move on X
+				CheckCollisionsX(objects, objectCount);    // Fix if needed
+			}
+		}
 	}
 	if (this->entityType == ENEMY3 && objects[0].entityType == PLATFORM) {
 		velocity += acceleration * deltaTime;
@@ -227,6 +289,32 @@ void Entity::Update(float deltaTime, Entity* objects, int objectCount)
 		position.x += velocity.x * deltaTime;        // Move on X
 		CheckCollisionsX(objects, objectCount);    // Fix if needed
 	}
+	else if (this->entityType == ENEMY3 && objects[0].entityType == PLAYER) {
+		if (this->killed) {
+			objects[0].kill3 = true;
+		}
+		else if (CheckCollision(objects[0], 5)) {
+			if (position.y <= -2)
+			{
+				acceleration += glm::vec3(0.0f, 1.0f, 0.0f);
+				velocity += acceleration * deltaTime;
+				position.y += velocity.y * deltaTime;        // Move on Y
+				CheckCollisionsY(objects, objectCount);    // Fix if needed
+
+				position.x += velocity.x * deltaTime;        // Move on X
+				CheckCollisionsX(objects, objectCount);    // Fix if needed
+			}
+			else {
+				acceleration += glm::vec3(0.0f, -2.0f, 0.0f);
+				velocity += acceleration * deltaTime;
+				position.y += velocity.y * deltaTime;        // Move on Y
+				CheckCollisionsY(objects, objectCount);    // Fix if needed
+
+				position.x += velocity.x * deltaTime;        // Move on X
+				CheckCollisionsX(objects, objectCount);    // Fix if needed
+			}
+		}
+	}
 }
 
 
@@ -234,6 +322,55 @@ void Entity::Update(float deltaTime, Entity* objects, int objectCount)
 void Entity::Render(ShaderProgram* program) {
 	if (!this->killed) {
 		glm::mat4 modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::translate(modelMatrix, position);
+		program->SetModelMatrix(modelMatrix);
+
+		float vertices[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
+		float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
+
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
+		glVertexAttribPointer(program->positionAttribute, 2, GL_FLOAT, false, 0, vertices);
+		glEnableVertexAttribArray(program->positionAttribute);
+
+		glVertexAttribPointer(program->texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
+		glEnableVertexAttribArray(program->texCoordAttribute);
+
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glDisableVertexAttribArray(program->positionAttribute);
+		glDisableVertexAttribArray(program->texCoordAttribute);
+	}
+	else if (this->win) {
+		this->textureID = LoadTexture("win.png");
+		this->position = glm::vec3(-3.0f, 1.0f, 0.0f);
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
+		this->position = glm::vec3(-3.0f, 1.0f, 0.0f);
+		modelMatrix = glm::translate(modelMatrix, position);
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
+		program->SetModelMatrix(modelMatrix);
+
+		float vertices[] = { -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5 };
+		float texCoords[] = { 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0, 0.0 };
+
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
+		glVertexAttribPointer(program->positionAttribute, 2, GL_FLOAT, false, 0, vertices);
+		glEnableVertexAttribArray(program->positionAttribute);
+
+		glVertexAttribPointer(program->texCoordAttribute, 2, GL_FLOAT, false, 0, texCoords);
+		glEnableVertexAttribArray(program->texCoordAttribute);
+
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+
+		glDisableVertexAttribArray(program->positionAttribute);
+		glDisableVertexAttribArray(program->texCoordAttribute);
+	}
+	else if (this->entityType == PLAYER) {
+		this->textureID = LoadTexture("lose.png");
+		this->position = glm::vec3(-3.0f, 1.0f, 0.0f);
+		glm::mat4 modelMatrix = glm::mat4(1.0f);
+		modelMatrix = glm::scale(modelMatrix, glm::vec3(1.0f, 1.0f, 1.0f));
 		modelMatrix = glm::translate(modelMatrix, position);
 		program->SetModelMatrix(modelMatrix);
 
@@ -298,11 +435,19 @@ void Initialize() {
 
 	for (int i = 0; i < 3; i++)
 	{
-		if (i == 2) {
-			state.enemy[i].entityType = ENEMY1;
+		if (i == 1) {
+			state.enemy[i].entityType = ENEMY2;
 			state.enemy[i].isStatic = true;
 			state.enemy[i].width = 1.0f;
-			state.enemy[i].position = glm::vec3(i, -4 + i, 0);
+			state.enemy[i].position = glm::vec3(i, -3 + i, 0);
+			state.enemy[i].acceleration = glm::vec3(0, -9.81f, 0);
+			state.enemy[i].textureID = LoadTexture("enemy.png");
+		}
+		else if (i == 2) {
+			state.enemy[i].entityType = ENEMY3;
+			state.enemy[i].isStatic = true;
+			state.enemy[i].width = 1.0f;
+			state.enemy[i].position = glm::vec3(i+1, -4 + i, 0);
 			state.enemy[i].acceleration = glm::vec3(0, -9.81f, 0);
 			state.enemy[i].textureID = LoadTexture("enemy.png");
 		}
